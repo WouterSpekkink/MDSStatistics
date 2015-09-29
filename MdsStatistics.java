@@ -94,11 +94,7 @@ public class MdsStatistics implements Statistics, LongTask {
     public static final String WEIGHT = "Weight";
     
     private double stress;
-    
-    private double min;
-    private double max;
-    private double val;
-    
+        
     private int N;
     
     //Doesn't do anything now.
@@ -106,6 +102,8 @@ public class MdsStatistics implements Statistics, LongTask {
 
     private boolean useDissimilarity = false;
     private boolean useSimilarity = false;
+    private String reportString = "";
+    private String reportStringTwo = "";
 
     //Distance matrix for path distances
     double [][] pathDistances;
@@ -702,10 +700,16 @@ public class MdsStatistics implements Statistics, LongTask {
     
     public void setDissimilarity(boolean useDissimilarity) {
         this.useDissimilarity = useDissimilarity;
+        if (useDissimilarity == true) {
+            reportString = "Weights interpreted as distances / dissimilarities.";
+        }
     }
     
     public void setSimilarity(boolean useSimilarity) {
         this.useSimilarity = useSimilarity;
+        if (useSimilarity == true) {
+            reportString = "Weights interpreted as proximities / similarities.";
+        }
     }
     
     public boolean isDissimilarity() {
@@ -720,11 +724,17 @@ public class MdsStatistics implements Statistics, LongTask {
         if(useNoWeights == true) {
             this.useDissimilarity = false;
             this.useSimilarity = false;
+            reportString = "Regular (unweighted) path distances used.";
         }
     }
     
     public void setDistanceWeight(int weight) {
         distanceWeight = weight;
+        if(weight == 0) {
+            reportStringTwo = "(all distances treated equally)";
+        } else if (weight == -2) {
+            reportStringTwo = "(large distances downweighted and small distances upweighted)";
+        }
     }
     
     public int getDistanceWeight() {
@@ -745,9 +755,12 @@ public class MdsStatistics implements Statistics, LongTask {
         //One could add a distribution histogram for instance
         String report = "<HTML> <BODY> <h1>Stress value</h1> "
                 + "<hr>"
-                + "<br> Stress of this MDS configuration: " + stress + "<br />"
-                + "<br>" + useDissimilarity + "<br />"
-                + "<br>" + useSimilarity + "<br />"
+                + "<br> Stress of this MDS configuration: " + stress +"<br />"
+                + "<br>" + reportStringTwo + "<br />"
+                + "<br> <br />"
+                + "<br>" + reportString + "<br />"
+                + "<br> <br />"
+                + "<br> Number of dimensions of the resulting configuration: " + numberDimensions + ".<br />"
                 + "<br> <br />"
                 + "</BODY></HTML>";
         return report;
